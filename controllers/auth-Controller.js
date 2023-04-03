@@ -1,4 +1,5 @@
 const { User } = require('../models');
+const { hashPassword } = require('../helpers/bcrypt');
 
 const register = async (req, res) => {
   try {
@@ -16,10 +17,11 @@ const register = async (req, res) => {
       });
     }
 
+    const encryptedPasswod = await hashPassword(password);
     const createdUser = await User.create({
       username: username,
       email: email,
-      password: password,
+      password: encryptedPasswod,
     });
 
     return res.status(201).json({
