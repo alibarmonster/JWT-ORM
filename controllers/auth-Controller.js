@@ -1,5 +1,7 @@
 const { User } = require('../models');
-const { hashPassword } = require('../helpers/bcrypt');
+const { hashPassword, comparePassword } = require('../helpers/bcrypt');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const register = async (req, res) => {
   try {
@@ -37,4 +39,64 @@ const register = async (req, res) => {
   }
 };
 
-module.exports = { register };
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        status: 'failed',
+        message: 'Email is required',
+      });
+    }
+
+    if (!password) {
+      return res.status(400).json({
+        status: 'failed',
+        message: 'Password is required',
+      });
+    }
+
+    const userExists = await User.findOne({
+      where: {
+        email: email,
+      },
+    });
+
+    if (!userExists) {
+      return res.status(400).json({
+        status: 'failed',
+        message: 'Email is not registered',
+      });
+    }
+
+    const passwordMatch = await comparePassword(password, userExists.password);
+    if (passwordMatch) {
+      const jwtToken = {
+        username: userExists.username,
+        email: userExists.email,
+        payload: userExists.password,
+      };
+
+      const token = jwt.sign(jwtToken, process.env.JWT_SECRET);
+
+      return res.status(200).json({
+        status: 'success',
+        message: 'User logged in Succesfully',
+        token: token,
+      });
+    }
+
+    return res.status(400).json({
+      status: 'failed',
+      message: 'Invalid email or password',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: 'failed',
+      message: err.message,
+    });
+  }
+};
+
+module.exports = { register, login };
