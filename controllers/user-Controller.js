@@ -28,9 +28,16 @@ const getUsersByUsername = async (req, res) => {
       },
     });
 
+    if (!usernameFound) {
+      return res.status(404).json({
+        status: 'failed',
+        message: `User with username ${username} not found`,
+      });
+    }
+
     return res.status(200).json({
       status: 'success',
-      message: 'User found',
+      message: `User with username ${username} found`,
       data: usernameFound,
     });
   } catch (err) {
