@@ -19,6 +19,18 @@ const register = async (req, res) => {
       });
     }
 
+    const usernameExists = await User.findOne({
+      where: {
+        username: username,
+      },
+    });
+
+    if (usernameExists) {
+      return res.status(404).json({
+        message: 'Failed',
+        status: 'Username has been registered',
+      });
+    }
     const encryptedPasswod = await hashPassword(password);
     const createdUser = await User.create({
       username: username,
