@@ -1,7 +1,7 @@
 const { User } = require('../models');
 const { hashPassword, comparePassword } = require('../helpers/bcrypt');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const { v4: uuid } = require('uuid');
 
 const register = async (req, res) => {
   try {
@@ -33,6 +33,7 @@ const register = async (req, res) => {
     }
     const encryptedPasswod = await hashPassword(password);
     const createdUser = await User.create({
+      id: uuid(),
       username: username,
       email: email,
       password: encryptedPasswod,
