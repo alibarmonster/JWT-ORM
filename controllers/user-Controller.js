@@ -19,7 +19,7 @@ const getAllUser = async (req, res) => {
   }
 };
 
-const getUsersByUsername = async (req, res) => {
+const getUsersById = async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -45,7 +45,7 @@ const getUsersByUsername = async (req, res) => {
   }
 };
 
-const updateUsersByUsername = async (req, res) => {
+const updateUsersById = async (req, res) => {
   try {
     const { username, password, email } = req.body;
     const id = req.params.id;
@@ -132,4 +132,4 @@ const updateUsersByUsername = async (req, res) => {
   }
 };
 
-module.exports = { getAllUser, getUsersByUsername, updateUsersByUsername };
+module.exports = { getAllUser, getUsersById, updateUsersById };
