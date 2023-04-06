@@ -38,9 +38,9 @@ const getUsersById = async (req, res) => {
       data: idFound,
     });
   } catch (err) {
-    return res.status(400).json({
+    return res.status(500).json({
       status: 'failed',
-      message: 'invalid id',
+      message: err.message,
     });
   }
 };
@@ -132,4 +132,29 @@ const updateUsersById = async (req, res) => {
   }
 };
 
-module.exports = { getAllUser, getUsersById, updateUsersById };
+const deleteUsersById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const idFound = await User.findByPk(id);
+
+    if (!idFound) {
+      return res.status(400).json({
+        status: 'failed',
+        message: 'id not found',
+      });
+    }
+
+    await idFound.destroy();
+    return res.status(200).json({
+      status: 'success',
+      message: 'Deleted user success',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: 'failed',
+      message: err.message,
+    });
+  }
+};
+
+module.exports = { getAllUser, getUsersById, updateUsersById, deleteUsersById };
