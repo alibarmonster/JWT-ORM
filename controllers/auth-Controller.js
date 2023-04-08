@@ -2,10 +2,20 @@ const { User } = require('../models');
 const { hashPassword, comparePassword } = require('../helpers/bcrypt');
 const jwt = require('jsonwebtoken');
 const { v4: uuid } = require('uuid');
+const { registerValidation, loginValidation } = require('../helpers/joiSchema');
 
 const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
+
+    const { error } = registerValidation.validate(req.body);
+    if (error) {
+      return res.status(400).json({
+        status: 'failed',
+        message: error.message,
+      });
+    }
+
     const emailExists = await User.findOne({
       where: {
         email: email,
@@ -14,8 +24,8 @@ const register = async (req, res) => {
 
     if (emailExists) {
       return res.status(404).json({
-        message: 'Failed',
-        status: 'email has been registered',
+        status: 'failed',
+        message: 'email has been registered',
       });
     }
 
@@ -27,8 +37,8 @@ const register = async (req, res) => {
 
     if (usernameExists) {
       return res.status(404).json({
-        message: 'Failed',
-        status: 'Username has been registered',
+        status: 'failed',
+        message: 'Username has been registered',
       });
     }
     const encryptedPasswod = await hashPassword(password);
@@ -55,6 +65,14 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    const { error } = loginValidation.validate(req.body);
+    if (error) {
+      return res.status(400).json({
+        status: 'failed',
+        message: error.message,
+      });
+    }
 
     if (!email) {
       return res.status(400).json({
