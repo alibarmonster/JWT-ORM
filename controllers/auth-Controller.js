@@ -2,7 +2,7 @@ const { User } = require('../models');
 const { hashPassword, comparePassword } = require('../helpers/bcrypt');
 const jwt = require('jsonwebtoken');
 const { v4: uuid } = require('uuid');
-const { registerValidation, loginValidation } = require('../helpers/joiSchema');
+const { registerValidation, loginValidation } = require('../helpers/auth-joiSchema');
 
 const register = async (req, res) => {
   try {

@@ -1,1 +1,0 @@
-const { registerValidation } = require('./joiSchema');
